@@ -1,0 +1,423 @@
+DBSenecyt.db
+
+.open DBSenecyt.db
+create table prueba(
+   num TEXT,
+   IdIe TEXT PRIMARY KEY,
+   NmIe TEXT,
+   EmIe TEXT,
+   PhnIe TEXT,
+   DescIe TEXT,
+   StsIe TEXT,
+   TypIe TEXT
+   );
+.schema prueba
+.mode csv
+.import institucioneducativa.csv institucioneducativa
+INSERT INTO prueba(num, IdIe, NmIe, EmIe, PhnIe, DescIe, StsIe, TypIe) SELECT ?, Id_IE, Nombre_IE, Correo_IE, Telefono_IE, Descrip_IE, Estado_IE, Tipo_IE FROM institucioneducativa;
+ALTER TABLE prueba DROP COLUMN num;
+drop table institucioneducativa;
+alter table prueba rename to InstitucionEducativa;
+.header on
+.mode column
+select * from InstitucionEducativa;
+
+
+create table prueba(
+   num TEXT,
+   IdPro TEXT PRIMARY KEY,
+   NmPro TEXT,
+   StsIe TEXT,
+   );
+.schema prueba
+.mode csv
+.import provincia.csv provincia
+INSERT INTO prueba(num, IdPro, NmPro, StsPro) SELECT ?, Id_Pro, Nombre_Pro, Estado_Pro FROM provincia;
+ALTER TABLE prueba DROP COLUMN num;
+drop table provincia;
+alter table prueba rename to Provincia;
+.header on
+.mode column
+select * from Provincia;
+
+
+create table prueba(
+   num TEXT,
+   IdCan TEXT NOT NULL,
+   NmCan TEXT,
+   StsCan TEXT,
+   IdPro TEXT NOT NULL,
+   UNIQUE(IdCan,IdPro),
+   CONSTRAINT PkCanton PRIMARY KEY(IdCan,IdPro),
+   FOREIGN KEY (IdPro) REFERENCES Provincia(IdPro)
+   );
+.schema prueba
+.mode csv
+.import canton.csv canton
+INSERT INTO prueba(num, IdCan, NmCan, StsCan, IdPro) SELECT ?, Id_Can, Nombre_Can, Estado_Can, Id_Pro FROM canton;
+ALTER TABLE prueba DROP COLUMN num;
+drop table canton;
+alter table prueba rename to Canton;
+.header on
+.mode column
+select * from Canton;
+
+create table prueba(
+num TEXT,
+IdPar TEXT NOT NULL,
+NmPar TEXT,
+StsPar TEXT,
+IdPro TEXT NOT NULL,
+IdCan TEXT NOT NULL,
+UNIQUE(IdPar,IdCan,IdPro),
+CONSTRAINT PkParro PRIMARY KEY(IdPar,IdCan,IdPro),
+FOREIGN KEY (IdCan) REFERENCES Canton(IdCan),
+FOREIGN KEY (IdPro) REFERENCES Canton(IdCan)
+);
+.schema prueba
+.mode csv
+.import parroquia.csv parroquia
+INSERT INTO prueba(num, IdPar, NmPar, StsPar,IdPro, IdCan) SELECT ?, Id_Par, Nombre_Par, Estado_Par, Id_Pro, Id_Can FROM parroquia;
+ALTER TABLE prueba DROP COLUMN num;
+drop table parroquia;
+alter table prueba rename to Parroquia;
+.header on
+.mode column
+select * from Parroquia;
+
+
+create table prueba(
+num TEXT,
+IdSe TEXT NOT NULL,
+NmSe TEXT,
+DescSe TEXT,
+PhnSe TEXT,
+StsPar TEXT,
+IdPro TEXT NOT NULL,
+IdPar TEXT NOT NULL,
+IdCan TEXT NOT NULL,
+IdIe TEXT NOT NULL,
+UNIQUE(IdSe,IdIe,IdPar,IdCan,IdPro),
+CONSTRAINT PkSe PRIMARY KEY(IdSe,IdIe,IdPar,IdCan,IdPro),
+FOREIGN KEY (IdCan) REFERENCES Parroquia(IdPar),
+FOREIGN KEY (IdPro) REFERENCES Parroquia(IdPar),
+FOREIGN KEY (IdPar) REFERENCES Parroquia(IdPar),
+FOREIGN KEY (IdIe) REFERENCES InstitucionEducativa(IdIe)
+);
+.schema prueba
+.mode csv
+.import sedes.csv sedes
+INSERT INTO prueba(num, IdSe, NmSe, DescSe, PhnSe, StsPar, IdPro, IdPar, IdCan, IdIe) SELECT ?, Id_Se,Nombre_Se,Descrip_Se,Telefono_Se,Estado_Se,Id_Pro,Id_Par,Id_Can,Id_IE FROM sedes;
+ALTER TABLE prueba DROP COLUMN num;
+drop table sedes;
+alter table prueba rename to Sedes;
+.header on
+.mode column
+select * from Sedes;
+
+
+create table prueba(
+num TEXT,
+IdIe TEXT NOT NULL,
+IdCar TEXT NOT NULL,
+IdSe TEXT NOT NULL,
+IdPar TEXT NOT NULL,
+IdCan TEXT NOT NULL,
+IdPro TEXT NOT NULL,
+UNIQUE(IdSe,IdIe,IdPar,IdCan,IdPro,IdCar),
+FOREIGN KEY (IdCan) REFERENCES Sedes(IdSe),
+FOREIGN KEY (IdPro) REFERENCES Sedes(IdSe),
+FOREIGN KEY (IdPar) REFERENCES Sedes(IdSe),
+FOREIGN KEY (IdSe) REFERENCES Sedes(IdSe),
+FOREIGN KEY (IdIe) REFERENCES Sedes(IdSe),
+FOREIGN KEY (IdCar) REFERENCES Carreras(IdCar)
+);
+.schema prueba
+.mode csv
+.import consta.csv consta
+INSERT INTO prueba(num, IdIe, IdCar, IdSe, IdPar, IdCan, IdPro) SELECT ?, Id_IE,Id_Car,Id_Se,Id_Par,Id_Can,Id_Pro FROM consta;
+ALTER TABLE prueba DROP COLUMN num;
+drop table consta;
+alter table prueba rename to Consta;
+.header on
+.mode column
+select * from Consta;
+
+create table prueba(
+num TEXT,
+IdCar TEXT PRIMARY KEY,
+NmCar TEXT,
+DescCar TEXT,
+StsCar TEXT,
+DtVldCar TEXT,
+MdeCar TEXT,
+AcadCrgCar TEXT
+);
+.schema prueba
+.mode csv
+.import carreras.csv carreras
+INSERT INTO prueba(num, IdCar, NmCar, DescCar, StsCar, DtVldCar, MdeCar, AcadCrgCar) SELECT ?, Id_Car,Nombre_Car,Descrip_Car,Estado_Car,Fecha_Vigencia_Car,Modalidad_Car,Jornada_Car FROM carreras;
+ALTER TABLE prueba DROP COLUMN num;
+drop table carreras;
+alter table prueba rename to Carreras;
+.header on
+.mode column
+select * from Carreras;
+
+create table prueba(
+num TEXT,
+IdUs TEXT PRIMARY KEY,
+NmUs TEXT,
+LstNmUs TEXT,
+EmUs TEXT,
+StsUs TEXT,
+CdUs TEXT,
+UsrUs TEXT,
+GnUs TEXT,
+PhnUs TEXT
+);
+.schema prueba
+.mode csv
+.import usuario.csv usuario
+INSERT INTO prueba(num, IdUs, NmUs, LstNmUs, EmUs, StsUs, CdUs, UsrUs, GnUs, PhnUs) SELECT ?, Id_Us,Nombres_Us,Apellidos_Us,Correo_Us,Estado_Us,Contra_Us,Nickname_Us,Genero_Us,Telefono_Us FROM usuario;
+ALTER TABLE prueba DROP COLUMN num;
+drop table usuario;
+alter table prueba rename to Usuario;
+.header on
+.mode column
+select * from Usuario;
+
+create table prueba(
+num TEXT,
+CcAs TEXT NOT NULL,
+NmAs TEXT,
+LstNmAs TEXT,
+EmAs TEXT,
+GnAs TEXT,
+PhnAs TEXT,
+DtNaciAs TEXT,
+AgeAs TEXT,
+StsAs TEXT,
+StsGratuiAs TEXT,
+StsCivilAs TEXT,
+IdUs TEXT NOT NULL,
+UNIQUE(CcAs,IdUs),
+CONSTRAINT PkAs PRIMARY KEY(CcAs,IdUs),
+FOREIGN KEY (IdUs) REFERENCES Usuario(IdUs)
+);
+.schema prueba
+.mode csv
+.import aspirantes.csv aspirantes
+INSERT INTO prueba(num, CcAs, NmAs, LstNmAs, EmAs, GnAs, PhnAs, DtNaciAs, AgeAs, StsAs, StsGratuiAs, StsCivilAs, IdUs) SELECT ?, CC_As,Nombres_As,Apellidos_As,Correo_As,Genero_As,Telefono_As,Fecha_Naci_As,Edad_As,Estado_As,Estado_Gratui_As,Estado_Civil_As,Id_Us FROM aspirantes;
+ALTER TABLE prueba DROP COLUMN num;
+drop table aspirantes;
+alter table prueba rename to Aspirantes;
+.header on
+.mode column
+select * from Aspirantes;
+
+create table prueba(
+num TEXT,
+IdExa TEXT PRIMARY KEY,
+DtExa TEXT,
+StsExa TEXT,
+ScrExa TEXT
+);
+.schema prueba
+.mode csv
+.import examen.csv examen
+INSERT INTO prueba(num, IdExa, DtExa, StsExa, ScrExa) SELECT ?, ID_Exa,Fecha_Exa,Estado_Exa,Puntaje_Exa FROM examen;
+ALTER TABLE prueba DROP COLUMN num;
+drop table examen;
+alter table prueba rename to Examen;
+.header on
+.mode column
+select * from Examen;
+
+create table prueba(
+num TEXT,
+IdUs TEXT NOT NULL,
+CcAs TEXT NOT NULL,
+IdExa TEXT NOT NULL,
+UNIQUE(CcAs,IdUs,IdExa),
+CONSTRAINT PkPertene PRIMARY KEY(CcAs,IdUs,IdExa),
+FOREIGN KEY (IdUs) REFERENCES Aspirantes(CcAs),
+FOREIGN KEY (CcAs) REFERENCES Aspirantes(CcAs),
+FOREIGN KEY (IdExa) REFERENCES Examen(IdExa)
+);
+.schema prueba
+.mode csv
+.import pertenece.csv pertenece
+INSERT INTO prueba(num, IdUs, CcAs, IdExa) SELECT ?, Id_Us,CC_As,Id_Exa FROM pertenece;
+ALTER TABLE prueba DROP COLUMN num;
+drop table pertenece;
+alter table prueba rename to Pertenece;
+.header on
+.mode column
+select * from Pertenece;
+
+create table prueba(
+num TEXT,
+IdPos TEXT NOT NULL,
+StsPos TEXT,
+ScrPos TEXT,
+IdExa TEXT NOT NULL,
+IdCar TEXT NOT NULL,
+IdUs TEXT NOT NULL,
+CcAs TEXT NOT NULL,
+UNIQUE(IdCar,CcAs,IdUs,IdExa,IdPos),
+CONSTRAINT PkPos PRIMARY KEY(IdCar,CcAs,IdUs,IdExa,IdPos),
+FOREIGN KEY (IdCar) REFERENCES Carreras(IdCar),
+FOREIGN KEY (CcAs) REFERENCES Pertenece(PkPertene),
+FOREIGN KEY (IdUs) REFERENCES Pertenece(PkPertene),
+FOREIGN KEY (IdExa) REFERENCES Pertenece(PkPertene)
+);
+.schema prueba
+.mode csv
+.import postular.csv postular
+INSERT INTO prueba(num, IdPos, StsPos, ScrPos, IdExa, IdCar, IdUs, CcAs) SELECT ?, Id_Pos,Estado_Pos,Puntaje_Pos,Id_Exa,Id_Car,Id_Us,CC_As FROM postular;
+ALTER TABLE prueba DROP COLUMN num;
+drop table postular;
+alter table prueba rename to Postular;
+.header on
+.mode column
+select * from Postular;
+
+create table prueba(
+num TEXT,
+IdPos TEXT NOT NULL,
+IdExa TEXT NOT NULL,
+IdCar TEXT NOT NULL,
+IdUs TEXT NOT NULL,
+CcAs TEXT NOT NULL,
+IdPara TEXT NOT NULL,
+UNIQUE(IdCar,CcAs,IdUs,IdExa,IdPos,IdPara),
+CONSTRAINT PkRige PRIMARY KEY(IdCar,CcAs,IdUs,IdExa,IdPos),
+FOREIGN KEY (IdCar) REFERENCES Postular(IdPos),
+FOREIGN KEY (CcAs) REFERENCES Postular(IdPos),
+FOREIGN KEY (IdUs) REFERENCES Postular(IdPos),
+FOREIGN KEY (IdExa) REFERENCES Postular(IdPos),
+FOREIGN KEY (IdPos) REFERENCES Postular(IdPos),
+FOREIGN KEY (IdPara) REFERENCES Parametros(IdPara)
+);
+.schema prueba
+.mode csv
+.import rige.csv rige
+INSERT INTO prueba(num, IdPos, IdExa, IdCar, IdUs, CcAs, IdPara) SELECT ?, Id_Pos,Id_Exa,Id_Car,Id_Us,CC_As,Id_Para FROM rige;
+ALTER TABLE prueba DROP COLUMN num;
+drop table rige;
+alter table prueba rename to Rige;
+.header on
+.mode column
+select * from Rige;
+
+create table prueba(
+num TEXT,
+IdPara TEXT PRIMARY KEY,
+AccionAfirSocioecoPara TEXT,
+AccionAfirTerriPara TEXT,
+AccionAfirRuralPara TEXT,
+AccionAfirVulneraPara TEXT,
+AccionAfirPueblosNacionPara TEXT,
+CuposOfertaCarPara TEXT,
+DtCuposOfertaCarPara TEXT,
+ScrReferCarPara TEXT
+);
+.schema prueba
+.mode csv
+.import parametros.csv parametros
+INSERT INTO prueba(num, IdPara, AccionAfirSocioecoPara , AccionAfirTerriPara, AccionAfirRuralPara, AccionAfirVulneraPara,AccionAfirPueblosNacionPara,CuposOfertaCarPara,DtCuposOfertaCarPara,ScrReferCarPara) SELECT ?, ID_Parametros,Accion_Afir_Socioeco_Para,Accion_Afir_Terri_Para,Accion_Afir_Rural_Para,Accion_Afir_Vulnera_Para,Accion_Afir_Pueblos_Nacion_Para,Cupos_Oferta_Car_Para,Fecha_Cupos_Oferta_Car_Para,Puntaje_Refer_Car_Para FROM parametros;
+ALTER TABLE prueba DROP COLUMN num;
+drop table parametros;
+alter table prueba rename to Parametros;
+.header on
+.mode column
+select * from Parametros;
+
+create table prueba(
+num TEXT,
+IdRol TEXT PRIMARY KEY,
+TypRol TEXT,
+StsRol TEXT,
+DescRol TEXT
+);
+.schema prueba
+.mode csv
+.import rol.csv rol
+INSERT INTO prueba(num, IdRol, TypRol, StsRol, DescRol) SELECT ?, Id_Rol,Tipo_Rol,Estado_Rol,Descrip_Rol FROM rol;
+ALTER TABLE prueba DROP COLUMN num;
+drop table rol;
+alter table prueba rename to Rol;
+.header on
+.mode column
+select * from Rol;
+
+create table prueba(
+num TEXT,
+IdPer TEXT PRIMARY KEY,
+TypPer TEXT,
+StsPer TEXT,
+DescPer TEXT
+);
+.schema prueba
+.mode csv
+.import permisos.csv permisos
+INSERT INTO prueba(num, IdPer, TypPer, StsPer, DescPer) SELECT ?, Id_Per,Tipo_Per,Estado_Per,Descrip_Per FROM permisos;
+ALTER TABLE prueba DROP COLUMN num;
+drop table permisos;
+alter table prueba rename to Permisos;
+.header on
+.mode column
+select * from Permisos;
+
+create table prueba(
+num TEXT,
+IdRol TEXT NOT NULL,
+IdPer TEXT NOT NULL,
+UNIQUE(IdRol,IdPer),
+CONSTRAINT PkEsta PRIMARY KEY(IdRol,IdPer),
+FOREIGN KEY (IdRol) REFERENCES Rol(IdRol),
+FOREIGN KEY (IdPer) REFERENCES Permisos(IdPer)
+);
+.schema prueba
+.mode csv
+.import establece.csv establece
+INSERT INTO prueba(num, IdRol, IdPer) SELECT ?, Id_Rol, Id_Per FROM establece;
+ALTER TABLE prueba DROP COLUMN num;
+drop table establece;
+alter table prueba rename to Establece;
+.header on
+.mode column
+select * from Establece;
+
+create table prueba(
+num TEXT,
+IdUs TEXT NOT NULL,
+IdRol TEXT NOT NULL,
+IdPer TEXT NOT NULL,
+UNIQUE(IdUs,IdRol,IdPer),
+CONSTRAINT PkDecre PRIMARY KEY(IdUs,IdRol,IdPer),
+FOREIGN KEY (IdUs) REFERENCES Usuario(IdUs),
+FOREIGN KEY (IdRol) REFERENCES Establece(PkEsta),
+FOREIGN KEY (IdPer) REFERENCES Establece(PkEsta)
+);
+.schema prueba
+.mode csv
+.import decreta.csv decreta
+INSERT INTO prueba(num, IdUs, IdRol, IdPer) SELECT ?, Id_Us,Id_Rol,Id_Per FROM decreta;
+ALTER TABLE prueba DROP COLUMN num;
+drop table decreta;
+alter table prueba rename to Decreta;
+.header on
+.mode column
+select * from Decreta;
+
+
+
+
+
+
+
+
+
+
